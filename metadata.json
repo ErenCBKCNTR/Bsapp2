@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
-  "requestFramePermissions": [],
+  "name": "WhatsApp Clone",
+  "description": "A WhatsApp clone with real-time messaging and LiveKit video/audio calls.",
+  "requestFramePermissions": ["camera", "microphone"],
   "majorCapabilities": []
 }

@@ -16,68 +16,48 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+val WhatsAppGreen = Color(0xFF008069)
+val WhatsAppGreenDark = Color(0xFF005c4b)
+val WhatsAppBackground = Color(0xFFEFEAE2)
+
+private val WhatsAppLightColorScheme = lightColorScheme(
+    primary = WhatsAppGreen,
+    onPrimary = Color.White,
+    secondary = Color(0xFF25D366),
+    onSecondary = Color.White,
+    background = Color.White,
+    onBackground = Color.Black,
+    surface = Color.White,
+    onSurface = Color.Black,
+    error = Color(0xFFEF4444)
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-)
-
-private val Design2ColorScheme = darkColorScheme(
-    primary = D2Primary,
-    onPrimary = D2OnPrimary,
-    secondary = D2Secondary,
-    onSecondary = D2Background,
-    background = D2Background,
-    onBackground = D2OnBackground,
-    surface = D2Surface,
-    onSurface = D2OnBackground,
-    error = D2Error
-)
-
-private val Design2LightColorScheme = lightColorScheme(
-    primary = D2LightPrimary,
-    onPrimary = D2LightOnPrimary,
-    secondary = D2LightSecondary,
-    onSecondary = D2LightBackground,
-    background = D2LightBackground,
-    onBackground = D2LightOnBackground,
-    surface = D2LightSurface,
-    onSurface = D2LightOnBackground,
-    error = D2LightError
-)
-
-private val Design3ColorScheme = darkColorScheme(
-    primary = Yellow400,
-    onPrimary = Zinc950,
-    secondary = Zinc800,
-    onSecondary = Zinc50,
-    background = Zinc950,
-    onBackground = Zinc50,
-    surface = Zinc900,
-    onSurface = Zinc50,
+private val WhatsAppDarkColorScheme = darkColorScheme(
+    primary = WhatsAppGreenDark,
+    onPrimary = Color.White,
+    secondary = Color(0xFF00A884),
+    onSecondary = Color.Black,
+    background = Color(0xFF111B21),
+    onBackground = Color(0xFFE9EDEF),
+    surface = Color(0xFF202C33),
+    onSurface = Color(0xFFE9EDEF),
     error = Color(0xFFEF4444)
 )
 
 @Composable
 fun BlindSocialTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false, // Disable dynamic color to force Design 3
-    isDesign2: Boolean = false, // We are using Design 3 now
+    dynamicColor: Boolean = false,
+    isDesign2: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = Design3ColorScheme // Force Design 3 for both light and dark for now to match the prototype
+    val colorScheme = if (darkTheme) WhatsAppDarkColorScheme else WhatsAppLightColorScheme
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
+            window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }

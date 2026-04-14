@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, Link2, ArrowUpRight } from 'lucide-react';
+import { Phone, Link2, ArrowUpRight, Video } from 'lucide-react';
 import { supabase, Oda } from '../lib/supabase';
 import { generateLiveKitToken } from '../lib/livekit';
 import { LiveKitRoom, VideoConference, RoomAudioRenderer } from '@livekit/components-react';
@@ -57,7 +57,7 @@ export default function RoomsScreen() {
           </button>
         </div>
         <div className="flex-1 relative">
-          <LiveKitRoom video={false} audio={true} token={liveKitToken} serverUrl={import.meta.env.VITE_LIVEKIT_URL} connect={true} data-lk-theme="default" style={{ height: '100%', backgroundColor: '#000' }}>
+          <LiveKitRoom video={true} audio={true} token={liveKitToken} serverUrl={import.meta.env.VITE_LIVEKIT_URL} connect={true} data-lk-theme="default" style={{ height: '100%', backgroundColor: '#000' }}>
             <VideoConference />
             <RoomAudioRenderer />
           </LiveKitRoom>
@@ -99,7 +99,9 @@ export default function RoomsScreen() {
                     {room.kategori} • {room.kapasite} Kişi
                   </p>
                 </div>
-                <Phone size={22} className="text-[#008069]" />
+                <div className="flex gap-4">
+                  <Video size={22} className="text-[#008069]" />
+                </div>
               </div>
             </div>
           ))

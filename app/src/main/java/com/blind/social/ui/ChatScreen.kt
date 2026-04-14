@@ -39,6 +39,16 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.ui.text.style.TextAlign
 
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.EmojiEmotions
+import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Close
@@ -371,39 +381,34 @@ fun ChatScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = Color(0xFFEFEAE2),
         topBar = {
-            Column {
-                TopAppBar(
-                    title = {
-                        Column {
-                            Text(roomName)
-                            Text("Katılımcılar: 1", style = MaterialTheme.typography.bodySmall) // Mock participant count
+            TopAppBar(
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .background(Color.LightGray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Group, contentDescription = null, tint = Color.White)
                         }
-                    },
-                    actions = {
-                        if (isCreator) {
-                            IconButton(onClick = {
-                                coroutineScope.launch {
-                                    val odaDeposu = com.blind.social.data.OdaDeposu()
-                                    val result = odaDeposu.odayiSil(roomId)
-                                    if (result.isSuccess) {
-                                        onNavigateBack()
-                                    } else {
-                                        snackbarHostState.showSnackbar("Oda silinemedi.")
-                                    }
-                                }
-                            }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Odayı Sil")
-                            }
-                        } else {
-                            TextButton(onClick = onNavigateBack) {
-                                Text("Ayrıl")
-                            }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(roomName, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                            Text("Katılımcılar: 1", color = Color.White.copy(alpha = 0.8f), fontSize = 13.sp)
                         }
                     }
-                )
-                Button(
-                    onClick = {
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = Color.White)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
                         checkPermissionsAndRun {
                             coroutineScope.launch {
                                 val username = currentUser?.userMetadata?.get("username")?.jsonPrimitive?.content ?: "Bilinmeyen"
@@ -415,84 +420,85 @@ fun ChatScreen(
                                 }
                             }
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    Text("Sesli Sohbete Katıl")
-                }
-            }
+                    }) {
+                        Icon(Icons.Default.Videocam, contentDescription = "Görüntülü Arama", tint = Color.White)
+                    }
+                    IconButton(onClick = { /* TODO */ }) {
+                        Icon(Icons.Default.Call, contentDescription = "Sesli Arama", tint = Color.White)
+                    }
+                    if (isCreator) {
+                        IconButton(onClick = {
+                            coroutineScope.launch {
+                                val odaDeposu = com.blind.social.data.OdaDeposu()
+                                val result = odaDeposu.odayiSil(roomId)
+                                if (result.isSuccess) {
+                                    onNavigateBack()
+                                } else {
+                                    snackbarHostState.showSnackbar("Oda silinemedi.")
+                                }
+                            }
+                        }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Seçenekler", tint = Color.White)
+                        }
+                    } else {
+                        IconButton(onClick = { /* TODO */ }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Seçenekler", tint = Color.White)
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = WhatsAppGreen)
+            )
         },
         bottomBar = {
-            val isDesign2 by themePreferences.isDesign2.collectAsState(initial = true)
             Surface(
-                color = if (isDesign2) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+                color = Color.Transparent,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     if (!isRecording) {
                         TextField(
                             value = messageText,
                             onValueChange = { messageText = it },
-                            modifier = Modifier.weight(1f).padding(end = 8.dp),
-                            placeholder = { Text("Mesaj yaz...") },
-                            singleLine = true,
-                            colors = if (isDesign2) TextFieldDefaults.colors(focusedContainerColor = MaterialTheme.colorScheme.surface, unfocusedContainerColor = MaterialTheme.colorScheme.surface) else TextFieldDefaults.colors()
-                        )
-
-                        if (isDesign2) {
-                            Box(
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(androidx.compose.foundation.shape.CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .clickable {
-                                        if (messageText.isNotBlank()) {
-                                            val pendingText = messageText
-                                            messageText = ""
-                                            val currentUsername = currentUser?.userMetadata?.get("username")?.jsonPrimitive?.content ?: "Sen"
-                                            val pendingMsg = Mesaj(
-                                                id = "pending-${System.currentTimeMillis()}",
-                                                odaId = roomId,
-                                                gonderenId = currentUser?.id ?: "",
-                                                metin = pendingText,
-                                                gonderenKullaniciAdi = currentUsername
-                                            ).also { it.sendStatus = "pending" }
-                                            localPendingMessages = localPendingMessages + pendingMsg
-
-                                            coroutineScope.launch {
-                                                val result = mesajDeposu.mesajGonder(roomId, pendingText)
-                                                localPendingMessages = localPendingMessages.filter { it.id != pendingMsg.id }
-                                                if (result.isSuccess) {
-                                                    triggerVibration()
-                                                } else {
-                                                    val errorMsg = result.exceptionOrNull()?.localizedMessage ?: "Bilinmeyen hata"
-                                                    val displayMsg = errorMsg.substringBefore('\n').take(60) + if (errorMsg.length > 60) "..." else ""
-                                                    snackbarHostState.showSnackbar("Mesaj gönderilemedi: $displayMsg")
-                                                }
-                                            }
-                                        } else {
-                                            checkPermissionsAndRun {
-                                                startRecording()
-                                            }
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp)
+                                .clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)),
+                            placeholder = { Text("Mesaj", color = Color.Gray) },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                cursorColor = WhatsAppGreen
+                            ),
+                            leadingIcon = {
+                                IconButton(onClick = { /*TODO*/ }) {
+                                    Icon(Icons.Default.EmojiEmotions, contentDescription = "Emoji", tint = Color.Gray)
+                                }
+                            },
+                            trailingIcon = {
+                                Row {
+                                    IconButton(onClick = { /*TODO*/ }) {
+                                        Icon(Icons.Default.AttachFile, contentDescription = "Eklenti", tint = Color.Gray)
+                                    }
+                                    if (messageText.isBlank()) {
+                                        IconButton(onClick = { /*TODO*/ }) {
+                                            Icon(Icons.Default.CameraAlt, contentDescription = "Kamera", tint = Color.Gray)
                                         }
                                     }
-                                    .semantics {
-                                        contentDescription = if (messageText.isNotBlank()) "Mesajı gönder" else "Sesli mesaj kaydetmek için çift dokunun"
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (messageText.isNotBlank()) Icons.AutoMirrored.Filled.Send else Icons.Default.Mic,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary
-                                )
+                                }
                             }
-                        } else {
-                            IconButton(
-                                onClick = {
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .background(WhatsAppGreen)
+                                .clickable {
                                     if (messageText.isNotBlank()) {
                                         val pendingText = messageText
                                         messageText = ""
@@ -517,33 +523,23 @@ fun ChatScreen(
                                                 snackbarHostState.showSnackbar("Mesaj gönderilemedi: $displayMsg")
                                             }
                                         }
+                                    } else {
+                                        checkPermissionsAndRun {
+                                            startRecording()
+                                        }
                                     }
                                 },
-                                modifier = Modifier.semantics { contentDescription = "Mesajı gönder" }
-                            ) {
-                                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Gönder")
-                            }
-
-                            IconButton(
-                                onClick = {
-                                    checkPermissionsAndRun {
-                                        startRecording()
-                                    }
-                                },
-                                modifier = Modifier.semantics {
-                                    contentDescription = "Sesli mesaj kaydetmek için çift dokunun"
-                                }
-                            ) {
-                                Icon(
-                                    Icons.Default.Mic,
-                                    contentDescription = null,
-                                    tint = LocalContentColor.current
-                                )
-                            }
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (messageText.isNotBlank()) Icons.AutoMirrored.Filled.Send else Icons.Default.Mic,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
                         }
                     } else {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(24.dp)).padding(8.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -554,35 +550,12 @@ fun ChatScreen(
                                 Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error)
                             }
 
-                            if (isDesign2) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(56.dp)
-                                        .clip(androidx.compose.foundation.shape.CircleShape)
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .clickable {
-                                            stopRecordingAndSend { errorMsg ->
-                                                coroutineScope.launch {
-                                                    if (errorMsg != null) {
-                                                        snackbarHostState.showSnackbar(errorMsg)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        .semantics {
-                                            contentDescription = "Kaydı bitir ve gönder"
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        Icons.AutoMirrored.Filled.Send,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                }
-                            } else {
-                                IconButton(
-                                    onClick = {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(androidx.compose.foundation.shape.CircleShape)
+                                    .background(WhatsAppGreen)
+                                    .clickable {
                                         stopRecordingAndSend { errorMsg ->
                                             coroutineScope.launch {
                                                 if (errorMsg != null) {
@@ -590,18 +563,17 @@ fun ChatScreen(
                                                 }
                                             }
                                         }
-                                    },
-                                    modifier = Modifier.semantics {
-                                        contentDescription = "Kaydı bitir ve gönder"
                                     }
-                                ) {
-                                    Icon(
-                                        Icons.Default.Mic,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(48.dp) // Make the main recording button more prominent
-                                    )
-                                }
+                                    .semantics {
+                                        contentDescription = "Kaydı bitir ve gönder"
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.Send,
+                                    contentDescription = null,
+                                    tint = Color.White
+                                )
                             }
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -625,11 +597,10 @@ fun ChatScreen(
                                     Icon(
                                         imageVector = if (isRecordingPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
                                         contentDescription = null,
-                                        tint = if (isDesign2) MaterialTheme.colorScheme.onBackground else LocalContentColor.current
+                                        tint = Color.Black
                                     )
                                 }
                             } else {
-                                // Provide a placeholder space to maintain centering of the Mic button if API < N
                                 Spacer(modifier = Modifier.size(48.dp))
                             }
                         }
@@ -731,23 +702,26 @@ fun ChatScreen(
                                 }
                             },
                         colors = CardDefaults.cardColors(
-                            containerColor = if (isMyMessage) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+                            containerColor = if (isMyMessage) Color(0xFFD9FDD3) else Color.White
                         ),
                         shape = MaterialTheme.shapes.medium.copy(
-                            bottomEnd = if (isMyMessage) androidx.compose.foundation.shape.CornerSize(0.dp) else androidx.compose.foundation.shape.CornerSize(16.dp),
-                            bottomStart = if (!isMyMessage) androidx.compose.foundation.shape.CornerSize(0.dp) else androidx.compose.foundation.shape.CornerSize(16.dp),
-                            topStart = androidx.compose.foundation.shape.CornerSize(16.dp),
-                            topEnd = androidx.compose.foundation.shape.CornerSize(16.dp)
-                        )
+                            bottomEnd = if (isMyMessage) androidx.compose.foundation.shape.CornerSize(0.dp) else androidx.compose.foundation.shape.CornerSize(8.dp),
+                            bottomStart = if (!isMyMessage) androidx.compose.foundation.shape.CornerSize(0.dp) else androidx.compose.foundation.shape.CornerSize(8.dp),
+                            topStart = androidx.compose.foundation.shape.CornerSize(8.dp),
+                            topEnd = androidx.compose.foundation.shape.CornerSize(8.dp)
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            val displaySenderName = mesaj.gonderenKullaniciAdi ?: mesaj.profil?.kullaniciAdi ?: "Bilinmeyen Kullanıcı"
-                            Text(
-                                text = displaySenderName,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.clearAndSetSemantics { }.padding(bottom = 4.dp)
-                            )
+                        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+                            if (!isMyMessage) {
+                                val displaySenderName = mesaj.gonderenKullaniciAdi ?: mesaj.profil?.kullaniciAdi ?: "Bilinmeyen Kullanıcı"
+                                Text(
+                                    text = displaySenderName,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = Color(0xFF027EB5),
+                                    modifier = Modifier.clearAndSetSemantics { }.padding(bottom = 2.dp)
+                                )
+                            }
                             if (mesaj.mesajTipi == "ses") {
                                 Column {
                                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
@@ -783,15 +757,15 @@ fun ChatScreen(
                                             LinearProgressIndicator(
                                                 progress = { playbackProgress },
                                                 modifier = Modifier.weight(1f).padding(horizontal = 8.dp).clearAndSetSemantics { },
-                                                color = MaterialTheme.colorScheme.primary,
-                                                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                                color = WhatsAppGreen,
+                                                trackColor = Color.LightGray
                                             )
                                         } else {
                                             LinearProgressIndicator(
                                                 progress = { 0f },
                                                 modifier = Modifier.weight(1f).padding(horizontal = 8.dp).clearAndSetSemantics { },
-                                                color = MaterialTheme.colorScheme.primary,
-                                                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                                color = WhatsAppGreen,
+                                                trackColor = Color.LightGray
                                             )
                                         }
                                     }
@@ -800,7 +774,7 @@ fun ChatScreen(
                                             text = "Süre: ${playbackDuration / 1000}s",
                                             style = MaterialTheme.typography.bodySmall,
                                             modifier = Modifier.padding(start = 48.dp, bottom = 8.dp).clearAndSetSemantics { },
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            color = Color.Gray
                                         )
                                     }
                                 }
@@ -808,21 +782,21 @@ fun ChatScreen(
                                 Text(
                                     text = mesaj.metin,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.clearAndSetSemantics { },
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    modifier = Modifier.clearAndSetSemantics { }.padding(horizontal = 4.dp, vertical = 2.dp),
+                                    color = Color.Black
                                 )
                             }
 
 
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp).clearAndSetSemantics { },
+                                modifier = Modifier.fillMaxWidth().padding(top = 2.dp).clearAndSetSemantics { },
                                 horizontalArrangement = Arrangement.End,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
                                     text = timeText,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                                    color = Color.Gray,
                                     modifier = Modifier.clearAndSetSemantics { }
                                 )
                                 if (mesaj.gonderenId == currentUser?.id) {
@@ -831,20 +805,20 @@ fun ChatScreen(
                                         "pending" -> Icon(
                                             imageVector = Icons.Default.Schedule,
                                             contentDescription = null,
-                                            modifier = Modifier.size(16.dp).clearAndSetSemantics { },
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                            modifier = Modifier.size(14.dp).clearAndSetSemantics { },
+                                            tint = Color.Gray
                                         )
                                         "error" -> Icon(
                                             imageVector = Icons.Default.ErrorOutline,
                                             contentDescription = null,
-                                            modifier = Modifier.size(16.dp).clearAndSetSemantics { },
+                                            modifier = Modifier.size(14.dp).clearAndSetSemantics { },
                                             tint = MaterialTheme.colorScheme.error
                                         )
                                         else -> Icon(
                                             imageVector = Icons.Default.Check,
                                             contentDescription = null,
-                                            modifier = Modifier.size(16.dp).clearAndSetSemantics { },
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                            modifier = Modifier.size(14.dp).clearAndSetSemantics { },
+                                            tint = Color.Gray
                                         )
                                     }
                                 }

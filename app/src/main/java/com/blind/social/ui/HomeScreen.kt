@@ -1,156 +1,135 @@
 package com.blind.social.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import com.blind.social.ui.theme.WhatsAppGreen
 
 @Composable
 fun HomeScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(24.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = "Hoş Geldiniz!",
-            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        val welcomeText = "Blind Social'a hoş geldiniz. Bu uygulama erişilebilir ve güvenli bir şekilde iletişim kurmanız için tasarlanmıştır."
-        Text(
-            text = welcomeText,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            modifier = Modifier.semantics { contentDescription = welcomeText }
-        )
-        
-        Spacer(modifier = Modifier.height(32.dp))
-        
-        Text(
-            text = "Hızlı İşlemler",
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Oda Oluştur Button
-        HomeActionButton(
-            title = "Oda Oluştur",
-            subtitle = "Yeni bir sohbet başlat",
-            icon = Icons.Default.Add,
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            iconBgColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.1f),
-            onClick = { /* TODO */ }
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Odalara Katıl Button
-        HomeActionButton(
-            title = "Odalara Katıl",
-            subtitle = "Aktif sohbetleri keşfet",
-            icon = Icons.Default.PlayArrow,
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            iconBgColor = MaterialTheme.colorScheme.background,
-            iconColor = MaterialTheme.colorScheme.primary,
-            onClick = { /* TODO */ }
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Arkadaş Bul Button
-        HomeActionButton(
-            title = "Arkadaş Bul",
-            subtitle = "Yeni insanlarla tanış",
-            icon = Icons.Default.Group,
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            iconBgColor = MaterialTheme.colorScheme.background,
-            iconColor = MaterialTheme.colorScheme.primary,
-            onClick = { /* TODO */ }
-        )
-    }
-}
+    var viewingStatus by remember { mutableStateOf(false) }
+    var progress by remember { mutableStateOf(0f) }
 
-@Composable
-fun HomeActionButton(
-    title: String,
-    subtitle: String,
-    icon: ImageVector,
-    containerColor: Color,
-    contentColor: Color,
-    iconBgColor: Color,
-    iconColor: Color = contentColor,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        ),
-        shape = RoundedCornerShape(24.dp),
-        contentPadding = PaddingValues(20.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics { contentDescription = "$title, $subtitle" }
-    ) {
+    LaunchedEffect(viewingStatus) {
+        if (viewingStatus) {
+            progress = 0f
+            while (progress < 1f) {
+                delay(50)
+                progress += 0.015f
+            }
+            viewingStatus = false
+        }
+    }
+
+    if (viewingStatus) {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 16.dp),
+                    color = Color.White,
+                    trackColor = Color.Gray
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.LightGray))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text("Durumum", color = Color.White, fontWeight = FontWeight.Medium)
+                            Text("Şimdi", color = Color.LightGray, fontSize = 12.sp)
+                        }
+                    }
+                    IconButton(onClick = { viewingStatus = false }) {
+                        Icon(Icons.Default.Add, contentDescription = "Kapat", tint = Color.White) // Should be Close icon
+                    }
+                }
+                Box(modifier = Modifier.fillMaxSize().background(Color(0xFF9C27B0)), contentAlignment = Alignment.Center) {
+                    Text("Bugün harika bir gün! \uD83C\uDF1F", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Medium)
+                }
+            }
+        }
+        return
+    }
+
+    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Durum", fontSize = 20.sp, fontWeight = FontWeight.Medium, color = Color.Black)
+            Icon(Icons.Default.MoreVert, contentDescription = "Diğer seçenekler", tint = Color.Gray)
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { viewingStatus = true }
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(contentAlignment = Alignment.BottomEnd) {
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(Color.LightGray)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .background(WhatsAppGreen),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Ekle", tint = Color.White, modifier = Modifier.size(16.dp))
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Durumum", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Color.Black)
+                Text("Şimdi eklendi", fontSize = 14.sp, color = Color.Gray)
+            }
+        }
+
+        Text(
+            "Son güncellemeler",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Gray,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .background(iconBgColor, RoundedCornerShape(28.dp)),
+                modifier = Modifier.size(64.dp).clip(CircleShape).background(Color(0xFFF5F5F5)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconColor,
-                    modifier = Modifier.size(32.dp)
-                )
+                Icon(Icons.Default.Add, contentDescription = "Ekle", tint = Color.Gray, modifier = Modifier.size(32.dp))
             }
-            
-            Spacer(modifier = Modifier.width(16.dp))
-            
-            Column {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = contentColor.copy(alpha = 0.8f)
-                )
-            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text("Şu an için yeni güncelleme yok", color = Color.Gray)
         }
     }
 }
