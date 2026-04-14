@@ -22,8 +22,17 @@ val D2Error = Color(0xFFFFB4AB)
 // Design 2 Colors (Onyx & Amber) Light
 val D2LightBackground = Color(0xFFFFF5DC)
 val D2LightSurface = Color(0xFFEBE3C8)
-val D2LightPrimary = Color(0xFFD4A000) // Koyu Amber, daha okunabilir
+val D2LightPrimary = Color(0xFFD4A000)
 val D2LightOnPrimary = Color(0xFFFFFFFF)
 val D2LightSecondary = Color(0xFF454747)
 val D2LightOnBackground = Color(0xFF1B1B1B)
 val D2LightError = Color(0xFFBA1A1A)
+
+// Design 3 Colors (Zinc & Yellow-400)
+val Zinc950 = Color(0xFF09090B)
+val Zinc900 = Color(0xFF18181B)
+val Zinc800 = Color(0xFF27272A)
+val Zinc700 = Color(0xFF3F3F46)
+val Zinc400 = Color(0xFFA1A1AA)
+val Zinc50 = Color(0xFFFAFAFA)
+val Yellow400 = Color(0xFFFACC15)

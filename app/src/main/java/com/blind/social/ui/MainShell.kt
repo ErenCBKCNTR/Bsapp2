@@ -117,15 +117,19 @@ fun MainShell(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Blind Social") },
+                    title = { Text("Blind Social", color = MaterialTheme.colorScheme.primary) },
                     navigationIcon = {
                         IconButton(
                             onClick = { coroutineScope.launch { drawerState.open() } },
                             modifier = Modifier.semantics { contentDescription = "Yan menüyü açmak için çift dokunun" }
                         ) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menüyü Aç")
+                            Icon(Icons.Default.Menu, contentDescription = "Menüyü Aç", tint = MaterialTheme.colorScheme.onSurface)
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        titleContentColor = MaterialTheme.colorScheme.primary
+                    )
                 )
             },
             bottomBar = {
@@ -135,7 +139,10 @@ fun MainShell(
                     BottomNavItem("messages", "Mesajlar", Icons.Default.Message, "Mesajlara gitmek için çift dokunun"),
                     BottomNavItem("profile", "Profil", Icons.Default.Person, "Profile gitmek için çift dokunun")
                 )
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ) {
                     items.forEach { item ->
                         NavigationBarItem(
                             icon = { Icon(item.icon, contentDescription = item.label) },
@@ -148,6 +155,13 @@ fun MainShell(
                                     restoreState = true
                                 }
                             },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                indicatorColor = MaterialTheme.colorScheme.surface
+                            ),
                             modifier = Modifier.semantics { contentDescription = item.contentDesc }
                         )
                     }

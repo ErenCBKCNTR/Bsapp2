@@ -74,52 +74,41 @@ fun RoomsScreen(onNavigateToChat: (String, String, String?) -> Unit) {
 
     Scaffold(
         topBar = {
-            if (isDesign2) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            "BLIND SOCIAL",
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.semantics { heading() }
+            TopAppBar(
+                title = {
+                    Text(
+                        "BLIND SOCIAL",
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.semantics { heading() }
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = { showFilters = !showFilters },
+                        modifier = Modifier.semantics { contentDescription = "Oda filtrelerini ${if (showFilters) "gizle" else "göster"}" }
+                    ) {
+                        Icon(
+                            Icons.Default.FilterList,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
                         )
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = { showFilters = !showFilters },
-                            modifier = Modifier.semantics { contentDescription = "Oda filtrelerini ${if (showFilters) "gizle" else "göster"}" }
-                        ) {
-                            Icon(
-                                Icons.Default.FilterList,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-                )
-            }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+            )
         },
         floatingActionButton = {
-            if (isDesign2) {
-                LargeFloatingActionButton(
-                    onClick = { showCreateDialog = true },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.semantics { contentDescription = "Yeni Oda Oluştur" }
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(36.dp))
-                }
-            } else {
-                FloatingActionButton(
-                    onClick = { showCreateDialog = true },
-                    modifier = Modifier.semantics { contentDescription = "Yeni oda oluşturmak için çift dokunun" }
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Oluştur")
-                }
+            LargeFloatingActionButton(
+                onClick = { showCreateDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.semantics { contentDescription = "Yeni Oda Oluştur" }
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(36.dp))
             }
         },
-        containerColor = if (isDesign2) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -127,31 +116,16 @@ fun RoomsScreen(onNavigateToChat: (String, String, String?) -> Unit) {
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            if (isDesign2) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Aktif Odalar",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = { showFilters = !showFilters },
-                        modifier = Modifier.semantics { contentDescription = "Oda filtrelerini ${if (showFilters) "gizle" else "göster"}" }
-                    ) {
-                        Icon(Icons.Default.FilterList, contentDescription = null)
-                    }
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Aktif Odalar",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
 
             // Filter Section with AnimatedVisibility
@@ -226,27 +200,17 @@ fun RoomsScreen(onNavigateToChat: (String, String, String?) -> Unit) {
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = if (isDesign2) Arrangement.spacedBy(16.dp) else Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(bottom = 80.dp)
                 ) {
-                    items(if (isDesign2) rooms else filteredRooms) { room ->
-                        if (isDesign2) {
-                            Design2RoomCard(room = room, onClick = {
-                                handleRoomClick(
-                                    room,
-                                    { pendingRoom = it; passwordInput = ""; passwordError = false },
-                                    { rId, rName, cId -> onNavigateToChat(rId, rName, cId) }
-                                )
-                            })
-                        } else {
-                            OriginalRoomCard(room = room, onClick = {
-                                handleRoomClick(
-                                    room,
-                                    { pendingRoom = it; passwordInput = ""; passwordError = false },
-                                    { rId, rName, cId -> onNavigateToChat(rId, rName, cId) }
-                                )
-                            })
-                        }
+                    items(filteredRooms) { room ->
+                        Design2RoomCard(room = room, onClick = {
+                            handleRoomClick(
+                                room,
+                                { pendingRoom = it; passwordInput = ""; passwordError = false },
+                                { rId, rName, cId -> onNavigateToChat(rId, rName, cId) }
+                            )
+                        })
                     }
                 }
             }

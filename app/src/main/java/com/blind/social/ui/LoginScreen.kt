@@ -71,31 +71,52 @@ fun LoginScreen(
             )
 
             Button(
-            onClick = {
-                if (email.isBlank() || sifre.isBlank()) {
-                    errorMessage = "E-posta ve şifre alanları boş bırakılamaz."
-                    return@Button
-                }
-                isLoading = true
-                errorMessage = null
-                coroutineScope.launch {
-                    val result = kimlikDeposu.girisYap(email, sifre)
-                    isLoading = false
-                    if (result.isSuccess) {
-                        onLoginSuccess()
-                    } else {
-                        errorMessage = "Giriş başarısız: ${result.exceptionOrNull()?.message}"
+                onClick = {
+                    if (email.isBlank() || sifre.isBlank()) {
+                        errorMessage = "E-posta ve şifre alanları boş bırakılamaz."
+                        return@Button
                     }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-                .semantics { contentDescription = "Giriş yapmak için çift dokunun" },
-            enabled = !isLoading
-        ) {
-            Text("Giriş Yap")
-        }
+                    isLoading = true
+                    errorMessage = null
+                    coroutineScope.launch {
+                        val result = kimlikDeposu.girisYap(email, sifre)
+                        isLoading = false
+                        if (result.isSuccess) {
+                            onLoginSuccess()
+                        } else {
+                            errorMessage = "Giriş başarısız: ${result.exceptionOrNull()?.message}"
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .semantics { contentDescription = "Giriş yapmak için çift dokunun" },
+                enabled = !isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text("Giriş Yap")
+            }
+
+            OutlinedButton(
+                onClick = {
+                    // Misafir girişi - Şimdilik giriş yapmayı atlayıp ana ekrana geçiyoruz
+                    onLoginSuccess()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .semantics { contentDescription = "Misafir olarak devam etmek için çift dokunun" },
+                enabled = !isLoading,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onBackground
+                )
+            ) {
+                Text("Misafir Olarak Devam Et")
+            }
 
             TextButton(onClick = onNavigateToRegister) {
                 Text("Hesabım Yok, Kaydol", color = MaterialTheme.colorScheme.primary)

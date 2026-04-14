@@ -51,29 +51,33 @@ private val Design2LightColorScheme = lightColorScheme(
     error = D2LightError
 )
 
+private val Design3ColorScheme = darkColorScheme(
+    primary = Yellow400,
+    onPrimary = Zinc950,
+    secondary = Zinc800,
+    onSecondary = Zinc50,
+    background = Zinc950,
+    onBackground = Zinc50,
+    surface = Zinc900,
+    onSurface = Zinc50,
+    error = Color(0xFFEF4444)
+)
+
 @Composable
 fun BlindSocialTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
-    isDesign2: Boolean = true,
+    dynamicColor: Boolean = false, // Disable dynamic color to force Design 3
+    isDesign2: Boolean = false, // We are using Design 3 now
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        isDesign2 && darkTheme -> Design2ColorScheme
-        isDesign2 && !darkTheme -> Design2LightColorScheme
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = Design3ColorScheme // Force Design 3 for both light and dark for now to match the prototype
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 
