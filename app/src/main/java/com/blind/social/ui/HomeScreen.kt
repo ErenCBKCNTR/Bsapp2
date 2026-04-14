@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -58,7 +59,7 @@ fun HomeScreen() {
                         }
                     }
                     IconButton(onClick = { viewingStatus = false }) {
-                        Icon(Icons.Default.Add, contentDescription = "Kapat", tint = Color.White) // Should be Close icon
+                        Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.White)
                     }
                 }
                 Box(modifier = Modifier.fillMaxSize().background(Color(0xFF9C27B0)), contentAlignment = Alignment.Center) {

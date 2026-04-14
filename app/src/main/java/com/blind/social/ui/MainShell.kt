@@ -2,6 +2,7 @@ package com.blind.social.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -136,7 +137,7 @@ fun MainShell(
             bottomBar = {
                 if (!currentRoute.startsWith("chat")) {
                     val items = listOf(
-                        BottomNavItem("messages", "Sohbetler", Icons.Default.Chat, "Sohbetlere gitmek için çift dokunun"),
+                        BottomNavItem("messages", "Sohbetler", Icons.AutoMirrored.Filled.Chat, "Sohbetlere gitmek için çift dokunun"),
                         BottomNavItem("home", "Güncellemeler", Icons.Default.DonutLarge, "Güncellemelere gitmek için çift dokunun"),
                         BottomNavItem("rooms", "Aramalar", Icons.Default.Call, "Aramalara gitmek için çift dokunun"),
                         BottomNavItem("profile", "Ayarlar", Icons.Default.Settings, "Ayarlara gitmek için çift dokunun")
@@ -183,8 +184,17 @@ fun MainShell(
                         navController.navigate("chat/$roomId/$roomName?creatorId=$safeCreatorId")
                     })
                 }
-                composable("messages") { MessagesScreen() }
-                composable("profile") { ProfileScreen() }
+                composable("messages") { 
+                    MessagesScreen(onNavigateToChat = { roomId, roomName, creatorId ->
+                        val safeCreatorId = creatorId?.toString() ?: "null"
+                        navController.navigate("chat/$roomId/$roomName?creatorId=$safeCreatorId")
+                    })
+                }
+                composable("profile") { 
+                    ProfileScreen(onNavigate = { route ->
+                        navController.navigate(route)
+                    })
+                }
                 composable("privacy") {
                     SettingsScreen(
                         isDesign2 = isDesign2,

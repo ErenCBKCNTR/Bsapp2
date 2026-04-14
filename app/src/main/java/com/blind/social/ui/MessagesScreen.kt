@@ -30,13 +30,13 @@ val mockMessages = listOf(
 )
 
 @Composable
-fun MessagesScreen() {
+fun MessagesScreen(onNavigateToChat: (String, String, String?) -> Unit) {
     Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { }
+                    .clickable { /* TODO: Arşivlenmiş sohbetler ekranı */ }
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -50,7 +50,9 @@ fun MessagesScreen() {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { }
+                            .clickable { 
+                                onNavigateToChat(msg.id.toString(), msg.name, null)
+                            }
                             .padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {

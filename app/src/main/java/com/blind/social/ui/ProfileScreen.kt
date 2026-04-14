@@ -18,9 +18,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.blind.social.ui.theme.WhatsAppGreen
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(onNavigate: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -32,7 +33,7 @@ fun ProfileScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
-                .clickable { }
+                .clickable { /* TODO: Profil düzenleme */ }
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -57,15 +58,15 @@ fun ProfileScreen() {
 
         // Settings Items
         SettingsSection {
-            SettingsItem(icon = Icons.Default.Key, title = "Hesap", subtitle = "Güvenlik bildirimleri, numara değiştirme")
-            SettingsItem(icon = Icons.Default.Lock, title = "Gizlilik", subtitle = "Kişileri engelleme, süreli mesajlar")
-            SettingsItem(icon = Icons.Default.Face, title = "Avatar", subtitle = "Oluştur, düzenle, profil fotoğrafı yap")
-            SettingsItem(icon = Icons.Default.Message, title = "Sohbetler", subtitle = "Tema, duvar kağıtları, sohbet geçmişi")
-            SettingsItem(icon = Icons.Default.Notifications, title = "Bildirimler", subtitle = "Mesaj, grup ve arama sesleri")
-            SettingsItem(icon = Icons.Default.DataUsage, title = "Depolama ve veriler", subtitle = "Ağ kullanımı, otomatik indirme")
-            SettingsItem(icon = Icons.Default.Language, title = "Uygulama dili", subtitle = "Türkçe (cihazın dili)")
-            SettingsItem(icon = Icons.Default.Help, title = "Yardım", subtitle = "Yardım merkezi, bize ulaşın, gizlilik ilkesi")
-            SettingsItem(icon = Icons.Default.Group, title = "Arkadaş davet et", subtitle = "")
+            SettingsItem(icon = Icons.Default.Key, title = "Hesap", subtitle = "Güvenlik bildirimleri, numara değiştirme") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.Lock, title = "Gizlilik", subtitle = "Kişileri engelleme, süreli mesajlar") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.Face, title = "Avatar", subtitle = "Oluştur, düzenle, profil fotoğrafı yap") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.Message, title = "Sohbetler", subtitle = "Tema, duvar kağıtları, sohbet geçmişi") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.Notifications, title = "Bildirimler", subtitle = "Mesaj, grup ve arama sesleri") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.DataUsage, title = "Depolama ve veriler", subtitle = "Ağ kullanımı, otomatik indirme") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.Language, title = "Uygulama dili", subtitle = "Türkçe (cihazın dili)") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.Help, title = "Yardım", subtitle = "Yardım merkezi, bize ulaşın, gizlilik ilkesi") { onNavigate("privacy") }
+            SettingsItem(icon = Icons.Default.Group, title = "Arkadaş davet et", subtitle = "") { onNavigate("privacy") }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -89,11 +90,11 @@ fun SettingsSection(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun SettingsItem(icon: ImageVector, title: String, subtitle: String) {
+fun SettingsItem(icon: ImageVector, title: String, subtitle: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
