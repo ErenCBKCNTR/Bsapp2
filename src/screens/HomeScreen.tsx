@@ -1,57 +1,93 @@
-import { Play, Users, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MoreVertical, Plus, X, Eye } from 'lucide-react';
 
 export default function HomeScreen() {
+  const [viewingStatus, setViewingStatus] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let interval: any;
+    if (viewingStatus) {
+      setProgress(0);
+      interval = setInterval(() => {
+        setProgress(p => {
+          if (p >= 100) {
+            setViewingStatus(false);
+            return 0;
+          }
+          return p + 1.5;
+        });
+      }, 50);
+    }
+    return () => clearInterval(interval);
+  }, [viewingStatus]);
+
+  if (viewingStatus) {
+    return (
+      <div className="fixed inset-0 bg-black z-50 flex flex-col">
+        <div className="flex gap-1 px-2 pt-4">
+          <div className="h-1 bg-gray-600 flex-1 rounded-full overflow-hidden">
+            <div className="h-full bg-white" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center justify-between p-4 text-white">
+          <div className="flex items-center gap-3">
+            <img src="https://i.pravatar.cc/150?u=me" alt="Me" className="w-10 h-10 rounded-full object-cover" />
+            <div>
+              <h3 className="font-medium">Durumum</h3>
+              <p className="text-xs text-gray-300">Şimdi</p>
+            </div>
+          </div>
+          <button onClick={() => setViewingStatus(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+            <X size={24} />
+          </button>
+        </div>
+        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500">
+          <div className="text-white text-3xl font-medium text-center px-6 drop-shadow-md">
+            Bugün harika bir gün! 🌟
+          </div>
+        </div>
+        <div className="p-6 flex justify-center pb-safe">
+          <div className="text-white flex flex-col items-center gap-1 cursor-pointer hover:text-gray-300 transition-colors">
+            <Eye size={24} />
+            <span className="text-xs font-medium">0 görüntülenme</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6 flex flex-col gap-8 h-full">
-      <section>
-        <h2 className="text-3xl font-bold mb-2">Hoş Geldiniz!</h2>
-        <p className="text-zinc-400 text-lg">
-          Blind Social'a hoş geldiniz. Bu uygulama erişilebilir ve güvenli bir şekilde iletişim kurmanız için tasarlanmıştır.
-        </p>
-      </section>
-
-      <section className="flex flex-col gap-4">
-        <h3 className="text-xl font-semibold text-zinc-300">Hızlı İşlemler</h3>
-        
-        <button 
-          className="w-full bg-yellow-400 hover:bg-yellow-500 text-zinc-950 p-6 rounded-2xl flex items-center gap-4 transition-transform active:scale-95"
-          aria-label="Yeni bir sesli oda oluştur"
-        >
-          <div className="bg-zinc-950/10 p-3 rounded-full">
-            <Plus size={32} />
+    <div className="flex flex-col h-full bg-white">
+      <div className="px-4 py-3 flex justify-between items-center">
+        <h2 className="text-xl font-medium text-black">Durum</h2>
+        <MoreVertical size={20} className="text-gray-600 cursor-pointer" />
+      </div>
+      
+      <div onClick={() => setViewingStatus(true)} className="px-4 py-2 flex items-center gap-4 hover:bg-gray-50 cursor-pointer transition-colors">
+        <div className="relative">
+          <div className="w-14 h-14 rounded-full bg-gray-200 overflow-hidden border-2 border-[#25D366] p-0.5">
+            <img src="https://i.pravatar.cc/150?u=me" alt="My Status" className="w-full h-full rounded-full object-cover" />
           </div>
-          <div className="text-left">
-            <div className="text-xl font-bold">Oda Oluştur</div>
-            <div className="text-zinc-800 font-medium">Yeni bir sohbet başlat</div>
+          <div className="absolute bottom-0 right-0 w-5 h-5 bg-[#25D366] rounded-full border-2 border-white flex items-center justify-center text-white">
+            <Plus size={14} />
           </div>
-        </button>
-
-        <button 
-          className="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-50 p-6 rounded-2xl flex items-center gap-4 transition-transform active:scale-95"
-          aria-label="Aktif odalara katıl"
-        >
-          <div className="bg-zinc-700 p-3 rounded-full text-yellow-400">
-            <Play size={32} />
+        </div>
+        <div className="flex-1 border-b border-gray-100 pb-3">
+          <h3 className="text-base font-medium text-black">Durumum</h3>
+          <p className="text-sm text-gray-500">Şimdi eklendi</p>
+        </div>
+      </div>
+      
+      <div className="px-4 py-2 mt-2">
+        <h2 className="text-sm font-medium text-gray-500 mb-4">Son güncellemeler</h2>
+        <div className="text-center text-gray-400 py-8 flex flex-col items-center gap-3">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+            <Plus size={24} className="text-gray-400" />
           </div>
-          <div className="text-left">
-            <div className="text-xl font-bold">Odalara Katıl</div>
-            <div className="text-zinc-400 font-medium">Aktif sohbetleri keşfet</div>
-          </div>
-        </button>
-
-        <button 
-          className="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-50 p-6 rounded-2xl flex items-center gap-4 transition-transform active:scale-95"
-          aria-label="Arkadaşlarını bul"
-        >
-          <div className="bg-zinc-700 p-3 rounded-full text-yellow-400">
-            <Users size={32} />
-          </div>
-          <div className="text-left">
-            <div className="text-xl font-bold">Arkadaş Bul</div>
-            <div className="text-zinc-400 font-medium">Yeni insanlarla tanış</div>
-          </div>
-        </button>
-      </section>
+          <p>Şu an için yeni güncelleme yok</p>
+        </div>
+      </div>
     </div>
   );
 }

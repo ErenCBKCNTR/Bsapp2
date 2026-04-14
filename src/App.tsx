@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Home, Mic, MessageSquare, User, Settings, Bell } from 'lucide-react';
+import { MessageSquare, Phone, CircleDashed, Settings, Camera, Search, MoreVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from './lib/supabase';
 
@@ -18,7 +18,7 @@ import ProfileScreen from './screens/ProfileScreen';
 export default function App() {
   const [session, setSession] = useState<any>(null);
   const [isGuest, setIsGuest] = useState(false);
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('messages');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function App() {
   }, []);
 
   if (loading) {
-    return <div className="h-screen bg-zinc-950 flex items-center justify-center text-yellow-400 font-bold text-xl">Yükleniyor...</div>;
+    return <div className="h-screen bg-white flex items-center justify-center text-[#008069] font-medium text-xl">WhatsApp...</div>;
   }
 
   if (!session && !isGuest) {
@@ -46,38 +46,35 @@ export default function App() {
 
   const renderScreen = () => {
     switch (activeTab) {
-      case 'home': return <HomeScreen />;
-      case 'rooms': return <RoomsScreen />;
       case 'messages': return <MessagesScreen />;
+      case 'rooms': return <RoomsScreen />;
+      case 'home': return <HomeScreen />;
       case 'profile': return <ProfileScreen onLogout={() => { supabase.auth.signOut(); setIsGuest(false); }} />;
-      default: return <HomeScreen />;
+      default: return <MessagesScreen />;
     }
   };
 
   return (
-    <div className="flex flex-col h-screen bg-zinc-950 text-zinc-50 font-sans overflow-hidden selection:bg-yellow-400 selection:text-zinc-950">
+    <div className="flex flex-col h-screen bg-white text-black font-sans overflow-hidden">
       {/* Top App Bar */}
-      <header className="flex items-center justify-between px-6 py-4 bg-zinc-900/50 backdrop-blur-md border-b border-zinc-800 z-10">
-        <h1 className="text-2xl font-bold tracking-tight text-yellow-400">Blind Social</h1>
-        <div className="flex gap-4">
-          <button className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors" aria-label="Bildirimler">
-            <Bell size={24} className="text-zinc-300" />
-          </button>
-          <button className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors" aria-label="Ayarlar">
-            <Settings size={24} className="text-zinc-300" />
-          </button>
+      <header className="flex items-center justify-between px-4 py-3 bg-[#008069] text-white shadow-sm z-10">
+        <h1 className="text-xl font-medium">WhatsApp</h1>
+        <div className="flex gap-5 items-center">
+          <Camera size={22} />
+          <Search size={22} />
+          <MoreVertical size={22} />
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto relative">
+      <main className="flex-1 overflow-y-auto relative bg-white">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.15 }}
             className="h-full"
           >
             {renderScreen()}
@@ -86,33 +83,33 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="bg-zinc-900 border-t border-zinc-800 pb-safe">
-        <div className="flex justify-around items-center h-20 px-2">
+      <nav className="bg-white border-t border-gray-200 pb-safe z-10">
+        <div className="flex justify-around items-center h-16 px-2">
+          <NavButton 
+            id="messages" 
+            icon={<MessageSquare size={24} className={activeTab === 'messages' ? "fill-current" : ""} />} 
+            label="Sohbetler" 
+            isActive={activeTab === 'messages'} 
+            onClick={() => setActiveTab('messages')} 
+          />
           <NavButton 
             id="home" 
-            icon={<Home size={28} />} 
-            label="Ana Sayfa" 
+            icon={<CircleDashed size={24} />} 
+            label="Güncellemeler" 
             isActive={activeTab === 'home'} 
             onClick={() => setActiveTab('home')} 
           />
           <NavButton 
             id="rooms" 
-            icon={<Mic size={28} />} 
-            label="Odalar" 
+            icon={<Phone size={24} className={activeTab === 'rooms' ? "fill-current" : ""} />} 
+            label="Aramalar" 
             isActive={activeTab === 'rooms'} 
             onClick={() => setActiveTab('rooms')} 
           />
           <NavButton 
-            id="messages" 
-            icon={<MessageSquare size={28} />} 
-            label="Mesajlar" 
-            isActive={activeTab === 'messages'} 
-            onClick={() => setActiveTab('messages')} 
-          />
-          <NavButton 
             id="profile" 
-            icon={<User size={28} />} 
-            label="Profil" 
+            icon={<Settings size={24} className={activeTab === 'profile' ? "fill-current" : ""} />} 
+            label="Ayarlar" 
             isActive={activeTab === 'profile'} 
             onClick={() => setActiveTab('profile')} 
           />
@@ -127,22 +124,15 @@ function NavButton({ id, icon, label, isActive, onClick }: { id: string, icon: R
     <button
       onClick={onClick}
       className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${
-        isActive ? 'text-yellow-400' : 'text-zinc-500 hover:text-zinc-300'
+        isActive ? 'text-[#008069]' : 'text-gray-500 hover:text-gray-800'
       }`}
       aria-label={label}
       aria-current={isActive ? 'page' : undefined}
     >
-      <div className="relative">
+      <div className={`relative ${isActive ? 'bg-green-100/50 px-4 py-1 rounded-full' : 'px-4 py-1'}`}>
         {icon}
-        {isActive && (
-          <motion.div
-            layoutId="nav-indicator"
-            className="absolute -bottom-2 left-1/2 w-1.5 h-1.5 bg-yellow-400 rounded-full -translate-x-1/2"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        )}
       </div>
-      <span className="text-[11px] font-medium mt-1">{label}</span>
+      <span className="text-[11px] font-medium">{label}</span>
     </button>
   );
 }
