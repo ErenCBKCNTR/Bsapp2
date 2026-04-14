@@ -3,25 +3,53 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, Mic, MessageSquare, User, Settings, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from './lib/supabase';
 
-// Mock Screens
+// Screens
+import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import RoomsScreen from './screens/RoomsScreen';
 import MessagesScreen from './screens/MessagesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 
 export default function App() {
+  const [session, setSession] = useState<any>(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return <div className="h-screen bg-zinc-950 flex items-center justify-center text-yellow-400 font-bold text-xl">Yükleniyor...</div>;
+  }
+
+  if (!session && !isGuest) {
+    return <LoginScreen onLoginSuccess={() => setIsGuest(true)} />;
+  }
 
   const renderScreen = () => {
     switch (activeTab) {
       case 'home': return <HomeScreen />;
       case 'rooms': return <RoomsScreen />;
       case 'messages': return <MessagesScreen />;
-      case 'profile': return <ProfileScreen />;
+      case 'profile': return <ProfileScreen onLogout={() => { supabase.auth.signOut(); setIsGuest(false); }} />;
       default: return <HomeScreen />;
     }
   };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { User, Settings, LogOut, Shield, CircleHelp } from 'lucide-react';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ onLogout }: { onLogout?: () => void }) {
   return (
     <div className="p-6 flex flex-col gap-8 h-full overflow-y-auto pb-24">
       <div className="flex flex-col items-center gap-4 mt-4">
@@ -32,7 +32,10 @@ export default function ProfileScreen() {
         <ProfileButton icon={<Shield size={24} />} label="Gizlilik ve Güvenlik" />
         <ProfileButton icon={<CircleHelp size={24} />} label="Yardım ve Destek" />
         
-        <button className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 p-4 rounded-2xl flex items-center gap-4 transition-colors text-left mt-4 border border-red-500/20">
+        <button 
+          onClick={onLogout}
+          className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 p-4 rounded-2xl flex items-center gap-4 transition-colors text-left mt-4 border border-red-500/20"
+        >
           <div className="p-2 rounded-full bg-red-500/20">
             <LogOut size={24} />
           </div>
