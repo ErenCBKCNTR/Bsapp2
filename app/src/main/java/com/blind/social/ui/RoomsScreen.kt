@@ -132,7 +132,7 @@ fun RoomsScreen(onNavigateToChat: (String, String, String?) -> Unit) {
             containerColor = WhatsAppGreen,
             contentColor = Color.White
         ) {
-            Icon(Icons.Default.AddCall, contentDescription = "Yeni Arama")
+            Icon(Icons.Default.Add, contentDescription = "Yeni Arama")
         }
     }
 }
