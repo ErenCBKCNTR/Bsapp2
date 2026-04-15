@@ -1,4 +1,5 @@
 package com.blind.social.ui
+import com.blind.social.ui.theme.WhatsAppGreen
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -565,7 +566,7 @@ fun ChatScreen(
                                         }
                                     }
                                     .semantics {
-                                        contentDescription = "Kaydı bitir ve gönder"
+                                        this.contentDescription = "Kaydı bitir ve gönder"
                                     },
                                 contentAlignment = Alignment.Center
                             ) {

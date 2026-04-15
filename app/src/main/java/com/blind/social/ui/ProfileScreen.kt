@@ -1,4 +1,5 @@
 package com.blind.social.ui
+import com.blind.social.ui.theme.WhatsAppGreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
